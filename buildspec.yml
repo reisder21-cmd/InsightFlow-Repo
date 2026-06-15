@@ -21,55 +21,27 @@ phases:
     commands:
       - echo "Starting deployment"
       - |
-        CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null||git diff --name-only HEAD)
-        echo "Changed files: $CHANGED_FILES"
-        if echo "$CHANGED_FILES" | grep -q "Close/lambdas/close-receiver"; then
-            echo "Deploying close-receiver..."
-            cd Close/lambdas
-            zip -r function.zip close-receiver.py
-            aws lambda update-function-code --function-name close-receiver --zip-file fileb://function.zip --region $AWS_REGION
-            cd ../../
-        fi
-        if echo "$CHANGED_FILES" | grep -q "Close/lambdas/close-enricher"; then
-            echo "Deploying close-enricher..."
-            cd Close/lambdas
-            zip -r function.zip close-enricher.py
-            aws lambda update-function-code --function-name close-enricher --zip-file fileb://function.zip --region $AWS_REGION
-            cd ../../
-        fi
-        if echo "$CHANGED_FILES" | grep -q "Close/lambdas/close-notifier-loader"; then
-            echo "Deploying close-notifier-loader..."
-            cd Close/lambdas
-            zip -r function.zip close-notifier-loader.py
-            aws lambda update-function-code --function-name close-notifier-loader --zip-file fileb://function.zip --region $AWS_REGION
-            cd ../../
-        fi
-        if echo "$CHANGED_FILES" | grep -q "Calendly/lambdas/calendly-receiver"; then
-            echo "Deploying calendly-receiver..."
-            cd Calendly/lambdas
-            zip -r function.zip calendly-receiver.py
-            aws lambda update-function-code --function-name calendly-receiver --zip-file fileb://function.zip --region $AWS_REGION
-            cd ../../
-        fi
-        if echo "$CHANGED_FILES" | grep -q "Calendly/lambdas/calendly-enricher"; then
-          echo "Deploying calendly-enricher..."
-          cd Calendly/lambdas
-          zip -r function.zip calendly-enricher.py
-          aws lambda update-function-code --function-name calendly-enricher --zip-file fileb://function.zip --region $AWS_REGION
-          cd ../../
-        fi
-        if echo "$CHANGED_FILES" | grep -q "Wistia/glue/wistia-ingestion"; then
-          echo "Deploying Wistia-ingest..."
-          aws s3 cp Wistia/glue/wistia-ingestion.py s3://$GLUE_BUCKET/$GLUE_SCRIPT_PATH/wistia-ingestion.py
-        fi
-        if echo "$CHANGED_FILES" | grep -q "Wistia/glue/wistia-silver-transformation"; then
-          echo "Deploying Wistia-silver-transformation..."
-          aws s3 cp Wistia/glue/wistia-silver-transformation.py s3://$GLUE_BUCKET/$GLUE_SCRIPT_PATH/wistia-silver-transformation.py
-        fi
-        if echo "$CHANGED_FILES" | grep -q "Wistia/glue/wistia-gold"; then
-          echo "Deploying Wistia-gold..."
-          aws s3 cp Wistia/glue/wistia-gold.py s3://$GLUE_BUCKET/$GLUE_SCRIPT_PATH/wistia-gold.py
-        fi
+        echo "Deploying all Lambdas and Glue scripts..."
+        
+        cd Close/lambdas
+        zip close-receiver.zip close-receiver.py
+        aws lambda update-function-code --function-name close-receiver --zip-file fileb://close-receiver.zip --region $AWS_REGION
+        zip close-enricher.zip close-enricher.py
+        aws lambda update-function-code --function-name close-enricher --zip-file fileb://close-enricher.zip --region $AWS_REGION
+        zip close-notifier-loader.zip close-notifier-loader.py
+        aws lambda update-function-code --function-name close-notifier-loader --zip-file fileb://close-notifier-loader.zip --region $AWS_REGION
+        cd ../../
+        
+        cd Calendly/lambdas
+        zip calendly-receiver.zip calendly-receiver.py
+        aws lambda update-function-code --function-name calendly-receiver --zip-file fileb://calendly-receiver.zip --region $AWS_REGION
+        zip calendly-enricher.zip calendly-enricher.py
+        aws lambda update-function-code --function-name calendly-enricher --zip-file fileb://calendly-enricher.zip --region $AWS_REGION
+        cd ../../
+        
+        aws s3 cp Wistia/glue/wistia-ingestion.py s3://$GLUE_BUCKET/$GLUE_SCRIPT_PATH/wistia-ingestion.py
+        aws s3 cp Wistia/glue/wistia-silver-transformation.py s3://$GLUE_BUCKET/$GLUE_SCRIPT_PATH/wistia-silver-transformation.py
+        aws s3 cp Wistia/glue/wistia-gold.py s3://$GLUE_BUCKET/$GLUE_SCRIPT_PATH/wistia-gold.py
   post_build:
     commands:
       - echo "Deployment complete"
