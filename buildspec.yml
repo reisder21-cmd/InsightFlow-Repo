@@ -4,7 +4,7 @@ env:
   variables:
     AWS_REGION: 'us-east-1'
     GLUE_BUCKET: 'insightflow-wistia'
-    GLUE_SCRIPT_PATH: 'glue-scripts/'
+    GLUE_SCRIPT_PATH: 'glue-scripts'
 
 phases:
   install:
