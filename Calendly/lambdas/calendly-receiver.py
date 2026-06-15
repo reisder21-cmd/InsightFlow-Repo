@@ -8,6 +8,7 @@ def lambda_handler(event, context):
     calendly_id = body['payload']['uri'].split('/')[-1]
     bucket = 'insightflow-calendly'
     target_key = f"bronze/calendly_event_{calendly_id}.json"
+    # adding a comment to test build pipeline
 
     s3_client.put_object(Bucket=bucket,Key=target_key,Body=json.dumps(body))
 
