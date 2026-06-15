@@ -39,7 +39,7 @@ phases:
         aws lambda update-function-code --function-name calendly-enricher --zip-file fileb://calendly-enricher.zip --region $AWS_REGION
         cd ../../
         
-        aws s3 cp Wistia/glue/wistia-ingestion.py s3://$GLUE_BUCKET/$GLUE_SCRIPT_PATH/wistia-ingestion.py
+        aws s3 cp Wistia/glue/wistia-ingest.py s3://$GLUE_BUCKET/$GLUE_SCRIPT_PATH/wistia-ingestion.py
         aws s3 cp Wistia/glue/wistia-silver-transformation.py s3://$GLUE_BUCKET/$GLUE_SCRIPT_PATH/wistia-silver-transformation.py
         aws s3 cp Wistia/glue/wistia-gold.py s3://$GLUE_BUCKET/$GLUE_SCRIPT_PATH/wistia-gold.py
   post_build:
