@@ -21,6 +21,8 @@ phases:
     commands:
       - echo "Starting deployment"
       - |
+        CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+        echo "Changed files: $CHANGED_FILES"
         if echo "$CHANGED_FILES" | grep -q "Close/lambdas/close-receiver"; then
             echo "Deploying close-receiver..."
             cd Close/lambdas
