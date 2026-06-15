@@ -108,6 +108,8 @@ def lambda_handler(event, context):
 
     target_key = f"gold/calendly_event_{invitee_id}.json"
     s3_client.put_object(Bucket=bucket_name,Key=target_key,Body=json.dumps(gold_events_data))
+    # TEST
+    # TEST
 
     # Insert into Redshift Table
 
