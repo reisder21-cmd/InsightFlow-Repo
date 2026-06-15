@@ -35,7 +35,8 @@ yesterday = date.today() - timedelta(1) # This is to only get media stats and vi
 test_date = date(2026, 3, 10)
 
 
-media_ids = ['gskhw4w4lm','v08dlrgr7v']
+#media_ids = ['gskhw4w4lm','v08dlrgr7v']
+media_ids = ['8hunphufxp','9k4tbcdfg0']
 for media_id in media_ids:
   metadata_url = f"https://api.wistia.com/modern/stats/medias/{media_id}/by_date?start_date={yesterday}"
   page = 0
