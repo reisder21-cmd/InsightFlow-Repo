@@ -76,7 +76,7 @@ for media_id in media_ids:
                 StructField("media_name", StringType(), True)
             ])
             events_df = spark.createDataFrame(flattened_events, schema=events_schema)
-            events_df.write.mode("overwrite").parquet
+            events_df.write.mode("overwrite").parquet(f"s3://insightflow-wistia/bronze/events_{today}_{media_id}.parquet")
       page +=1
       if len(events) < 100 or not flattened_events:
             break
