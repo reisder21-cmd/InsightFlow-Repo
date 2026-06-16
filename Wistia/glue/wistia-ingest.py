@@ -7,6 +7,7 @@ from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
+from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
 # from pyspark.sql import SparkSession
 # from pyspark.sql.functions import current_date
 from datetime import date, timedelta
@@ -62,7 +63,19 @@ for media_id in media_ids:
           for e in events
       ]
       if flattened_events:
-            events_df = spark.createDataFrame(flattened_events)
+            events_schema = StructType([
+                StructField("received_at", StringType(), True),
+                StructField("event_key", StringType(), True),
+                StructField("ip", StringType(), True),
+                StructField("country", StringType(), True),
+                StructField("region", StringType(), True),
+                StructField("city", StringType(), True),
+                StructField("percent_viewed", DoubleType(), True),
+                StructField("visitor_key", StringType(), True),
+                StructField("media_id", StringType(), True),
+                StructField("media_name", StringType(), True)
+            ])
+            events_df = spark.createDataFrame(flattened_events, schema=events_schema)
             events_df.write.mode("overwrite").parquet
       page +=1
       if len(events) < 100 or not flattened_events:
@@ -82,7 +95,14 @@ for media_id in media_ids:
     }
     for s in metadata
 ]
-  metadata_df = spark.createDataFrame(flattened_metadata)
+  metadata_schema = StructType([
+    StructField("media_id", StringType(), True),
+    StructField("date", StringType(), True),
+    StructField("load_count", LongType(), True),
+    StructField("play_count", LongType(), True),
+    StructField("hours_watched", DoubleType(), True)
+])
+  metadata_df = spark.createDataFrame(flattened_metadata, schema=metadata_schema)
   metadata_df.write.mode("overwrite").parquet(f"s3://insightflow-wistia/bronze/metadata_{today}_{media_id}.parquet")
 
 page = 0
@@ -111,7 +131,15 @@ while True:
         # print(f"DEBUG Filtered visitors count: {len(filtered_visitors)}")
         # print(f"DEBUG Sample filtered: {filtered_visitors[:1]}")
         if filtered_visitors:
-            visitor_df = spark.createDataFrame(filtered_visitors)
+            visitor_schema = StructType([
+                StructField("visitor_key", StringType(), True),
+                StructField("created_at", StringType(), True),
+                StructField("last_active_at", StringType(), True),
+                StructField("load_count", LongType(), True),
+                StructField("play_count", LongType(), True)
+            ])
+
+            visitor_df = spark.createDataFrame(filtered_visitors, schema=visitor_schema)
             visitor_df.write.mode("overwrite").parquet(f"s3://insightflow-wistia/bronze/visitor_{today}_{page}.parquet")
         
         page +=1
