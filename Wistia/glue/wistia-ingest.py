@@ -55,7 +55,7 @@ for media_id in media_ids:
               'country': e['country'],
               'region': e['region'],
               'city': e['city'],
-              'percent_viewed': e['percent_viewed'],
+              'percent_viewed': float(e['percent_viewed']) if e['percent_viewed'] is not None else None,
               'visitor_key': e['visitor_key'],
               'media_id': e['media_id'],
               'media_name': e['media_name']
@@ -91,7 +91,7 @@ for media_id in media_ids:
         'date': s['date'],
         'load_count': s['load_count'],
         'play_count': s['play_count'],
-        'hours_watched': s['hours_watched']
+        'hours_watched': float(s['hours_watched']) if s['hours_watched'] is not None else None
     }
     for s in metadata
 ]
