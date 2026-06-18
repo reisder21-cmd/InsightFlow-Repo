@@ -1,0 +1,4 @@
+Dashoard/data/
+__pycache__/
+*.pyc
+.env
