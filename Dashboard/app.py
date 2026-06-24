@@ -153,6 +153,9 @@ st.plotly_chart(fig3)
 #----------------------------------------
 # 1.5 Booking Volume by hour and day of week
 #-------------------------------------------
+
+# HeatMap
+
 st.subheader("Booking Volume by hour and day of week")
 
 booking_volume = df.groupby(['hour', 'day_of_week']).agg(
@@ -168,3 +171,81 @@ fig4 = px.imshow(
 )
 
 st.plotly_chart(fig4)
+
+# Histogram
+st.subheader("Bookings by Hour")
+
+fig5 = px.histogram(booking_volume, x='hour', y='booking_count')
+
+st.plotly_chart(fig5)
+
+# Pie Chart
+
+st.subheader("Bookings by Day of Week")
+
+fig6 = px.pie(
+    booking_volume,
+    names = 'day_of_week',
+    values = 'booking_count'
+)
+st.plotly_chart(fig6)
+
+#------------------------------------------------------
+# 1.6 Understand Meeting Load per Employee
+#------------------------------------------------------
+
+# Get average meetings per week first = total meetings/number of weeks
+
+meeting_info = df.groupby('employee_name').agg(
+    meeting_count = ('booking_id', 'count'),
+    week_count = ('week','nunique'),
+).reset_index()
+
+meeting_info['avg_meeting_per_week'] = meeting_info['meeting_count'] / meeting_info['week_count']
+
+#--------------------
+
+# bar chart - employee vs avg meetings/week
+
+st.subheader("Average Meetings Per Employee, Per Week")
+
+fig7 = px.bar(
+    meeting_info,
+    x = 'employee_name',
+    y= 'avg_meeting_per_week'
+)
+
+st.plotly_chart(fig7)
+#----------------------
+# KPI - total, max and min meetings
+
+st.subheader("Meeting KPIs", divider=True)
+
+total_meetings = meeting_info['meeting_count'].sum()
+min_meetings = meeting_info['meeting_count'].min()
+max_meetings = meeting_info['meeting_count'].max()
+
+mcol1, mcol2, mcol3 = st.columns(3)
+
+mcol1.metric(label="Total Meetings", value=f"{total_meetings}")
+mcol2.metric(label="Minimum Meetings", value=f"{min_meetings}")
+mcol3.metric(label="Maximum Meetings", value=f"{max_meetings}")
+
+
+st.subheader(' ', divider=True)
+
+#Line chart for weekly trend per employee
+
+weekly_trend = df.groupby(['employee_name','week']).agg(
+    meeting_count = ('booking_id', 'count')
+).reset_index()
+
+fig8 = px.line(
+    weekly_trend,
+    x= 'week',
+    y= 'meeting_count',
+    color = 'employee_name'
+)
+
+st.subheader("Weekly Trend Per Employee")
+st.plotly_chart(fig8)
