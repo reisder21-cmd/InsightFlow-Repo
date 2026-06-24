@@ -26,7 +26,7 @@ def lambda_handler(event, context):
     funnel = body['funnel']
     status_label = body['status_label']
     date_created = body['date_created']
-    # TEST
+    # TEST1
 
     date_created = date_created.replace('+00:00', '').replace('T', ' ')
     date_created = date_created[:19] # trim to YYYY-MM-DD HH:MM:SS
