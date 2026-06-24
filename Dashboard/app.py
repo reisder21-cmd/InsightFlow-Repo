@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-# Read from parquet after running refresh script
+# !!! read from parquet after running refresh script !!!
 
 # First we will get Calendly specific data
 
@@ -149,3 +149,22 @@ fig3 = px.area(
 )
 
 st.plotly_chart(fig3)
+
+#----------------------------------------
+# 1.5 Booking Volume by hour and day of week
+#-------------------------------------------
+st.subheader("Booking Volume by hour and day of week")
+
+booking_volume = df.groupby(['hour', 'day_of_week']).agg(
+        booking_count = ('invitee_id', 'count')
+).reset_index()
+
+pivoted_df = booking_volume.pivot(index='hour',columns='day_of_week',values='booking_count')
+
+fig4 = px.imshow(
+    pivoted_df,
+    title="Heat Map",
+    labels=dict(x='Day of Week', y='Hour of Day', color='Bookings')
+)
+
+st.plotly_chart(fig4)

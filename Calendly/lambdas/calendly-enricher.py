@@ -33,7 +33,7 @@ def lambda_handler(event, context):
     end_time = body['payload']['scheduled_event']['end_time']
     event_name = body['payload']['scheduled_event']['name']
     event_type_id = body['payload']['scheduled_event']['event_type'].split('/')[-1]
-    campaign = body['payload']['tracking']['utm_campaign']
+    campaign = body['payload']['tracking'].get('utm_campaign')
     print(f"event_type_id: '{event_type_id}'")
 
     # Employee from payload.scheduled_event.event_membership[0]
