@@ -34,6 +34,7 @@ def lambda_handler(event, context):
     slack_url = os.environ.get('SLACK_WEBHOOK_URL')
 
     message = f"Incoming Lead ID: {lead_id}"
+    # Testing CI/CD
 
     payload = {
       "text": f"New Lead: {display_name} | {lead_email} | Owner: {lead_owner} | Funnel: {funnel} | Status: {status_label}"
